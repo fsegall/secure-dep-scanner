@@ -1,0 +1,59 @@
+{
+    "name": "secure-dep-scanner",
+    "version": "1.0.2",
+    "description": "A comprehensive security scanner for detecting suspicious dependencies, malicious packages, and vulnerabilities in Node.js projects.",
+    "main": "security-scanner.cjs",
+    "bin": {
+        "secure-dep-scanner": "security-scanner.cjs"
+    },
+    "scripts": {
+        "start": "node security-scanner.cjs",
+        "scan": "node security-scanner.cjs",
+        "test": "node security-scanner.cjs --test"
+    },
+    "keywords": [
+        "security",
+        "scanner",
+        "dependencies",
+        "malware",
+        "vulnerabilities",
+        "npm",
+        "nodejs",
+        "audit",
+        "typosquatting",
+        "suspicious-packages"
+    ],
+    "author": {
+        "name": "Felipe Segall Corrêa",
+        "email": "contato@livresoltech.com",
+        "url": "https://livresoltech.com"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/livresoltech/secure-dep-scanner.git"
+    },
+    "bugs": {
+        "url": "https://github.com/livresoltech/secure-dep-scanner/issues"
+    },
+    "homepage": "https://github.com/livresoltech/secure-dep-scanner#readme",
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "os": [
+        "linux",
+        "darwin",
+        "win32"
+    ],
+    "files": [
+        "security-scanner.cjs",
+        "README.md",
+        "LICENSE",
+        "SECURITY.md",
+        "CONTRIBUTING.md",
+        "CHANGELOG.md"
+    ],
+    "publishConfig": {
+        "access": "public"
+    }
+}
