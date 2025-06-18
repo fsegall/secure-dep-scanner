@@ -1,6 +1,6 @@
 {
     "name": "secure-dep-scanner",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A comprehensive security scanner for detecting suspicious dependencies, malicious packages, and vulnerabilities in Node.js projects.",
     "main": "security-scanner.cjs",
     "bin": {
