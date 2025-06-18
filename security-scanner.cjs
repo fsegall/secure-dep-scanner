@@ -59,7 +59,15 @@ class SecurityScanner {
       // Suspicious keywords
       'buffer logs',
       'command execution',
-      'remote control'
+      'remote control',
+      
+      // TypeScript-specific suspicious patterns
+      'declare global',
+      'namespace global',
+      'module augmentation',
+      'ambient declarations',
+      'declare module',
+      'interface global'
     ];
     
     this.blockedPackages = new Set([
@@ -375,14 +383,14 @@ class SecurityScanner {
           
           // Recursively scan subdirectories
           issues.push(...this.scanDirectory(filePath, context));
-        } else if (stat.isFile() && file.endsWith('.js')) {
+        } else if (stat.isFile() && this.isScannableFile(file)) {
           // Only scan files in suspicious packages
           const packageName = path.basename(path.dirname(filePath));
           if (this.legitimatePackages.has(packageName)) {
             continue; // Skip legitimate packages
           }
           
-          // Scan JavaScript files for malicious content
+          // Scan files for malicious content
           try {
             const content = fs.readFileSync(filePath, 'utf8');
             const fileIssues = this.scanFileContent(content, filePath, context);
@@ -397,6 +405,17 @@ class SecurityScanner {
     }
     
     return issues;
+  }
+
+  /**
+   * Check if file should be scanned for malicious content
+   */
+  isScannableFile(filename) {
+    const scannableExtensions = [
+      '.js', '.jsx', '.ts', '.tsx', '.d.ts', '.mjs', '.cjs'
+    ];
+    
+    return scannableExtensions.some(ext => filename.endsWith(ext));
   }
 
   /**
@@ -737,10 +756,11 @@ class SecurityScanner {
     // Run all scans
     const packageIssues = this.scanPackageJson();
     const nodeModulesIssues = this.scanNodeModules();
+    const tsConfigIssues = this.scanTypeScriptConfig();
     const auditIssues = await this.runNpmAudit();
     
     // Combine all issues
-    const allIssues = [...packageIssues, ...nodeModulesIssues, ...auditIssues];
+    const allIssues = [...packageIssues, ...nodeModulesIssues, ...tsConfigIssues, ...auditIssues];
     
     // Generate report
     this.generateReport(allIssues);
@@ -775,6 +795,100 @@ class SecurityScanner {
     }
     
     return allIssues;
+  }
+
+  /**
+   * Scan TypeScript configuration for suspicious settings
+   */
+  scanTypeScriptConfig() {
+    this.print('🔍 Scanning TypeScript configuration...', 'blue');
+    
+    const tsConfigPaths = [
+      'tsconfig.json',
+      'tsconfig.app.json',
+      'tsconfig.lib.json',
+      'tsconfig.test.json'
+    ];
+    
+    let issues = [];
+    
+    for (const configPath of tsConfigPaths) {
+      if (fs.existsSync(configPath)) {
+        try {
+          const content = fs.readFileSync(configPath, 'utf8');
+          const tsConfig = JSON.parse(content);
+          
+          // Check for suspicious compiler options
+          const configIssues = this.analyzeTypeScriptConfig(tsConfig, configPath);
+          issues.push(...configIssues);
+          
+        } catch (error) {
+          // Skip invalid JSON files
+          this.print(`⚠️ Warning: Could not parse ${configPath}: ${error.message}`, 'yellow');
+        }
+      }
+    }
+    
+    return issues;
+  }
+
+  /**
+   * Analyze TypeScript configuration for suspicious settings
+   */
+  analyzeTypeScriptConfig(config, configPath) {
+    const issues = [];
+    
+    // Check for suspicious compiler options
+    const suspiciousOptions = [
+      'allowJs', 'checkJs', 'noEmitOnError', 'skipLibCheck'
+    ];
+    
+    if (config.compilerOptions) {
+      for (const option of suspiciousOptions) {
+        if (config.compilerOptions[option] === true) {
+          issues.push({
+            type: 'SUSPICIOUS_TS_CONFIG',
+            severity: 'MEDIUM',
+            file: configPath,
+            option: option,
+            message: `⚠️ MEDIUM: TypeScript option "${option}" enabled in ${configPath} - review for security implications`
+          });
+        }
+      }
+      
+      // Check for suspicious paths
+      if (config.compilerOptions.paths) {
+        for (const [alias, paths] of Object.entries(config.compilerOptions.paths)) {
+          if (typeof paths === 'string' && paths.includes('*')) {
+            issues.push({
+              type: 'SUSPICIOUS_TS_PATH',
+              severity: 'LOW',
+              file: configPath,
+              alias: alias,
+              path: paths,
+              message: `📝 LOW: Wildcard path mapping "${alias}" -> "${paths}" in ${configPath} - review for security`
+            });
+          }
+        }
+      }
+    }
+    
+    // Check for suspicious include/exclude patterns
+    if (config.include) {
+      for (const pattern of config.include) {
+        if (pattern.includes('**') || pattern.includes('*')) {
+          issues.push({
+            type: 'SUSPICIOUS_TS_INCLUDE',
+            severity: 'LOW',
+            file: configPath,
+            pattern: pattern,
+            message: `📝 LOW: Wildcard include pattern "${pattern}" in ${configPath} - review for security`
+          });
+        }
+      }
+    }
+    
+    return issues;
   }
 }
 

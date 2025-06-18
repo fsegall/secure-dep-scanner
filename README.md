@@ -67,6 +67,8 @@ curl -s https://raw.githubusercontent.com/livresoltech/secure-dep-scanner/main/s
 - Detects suspicious IP addresses and command execution
 - Scans for known malware signatures
 - Identifies suspicious file content
+- **TypeScript support**: Scans `.ts`, `.tsx`, `.d.ts` files
+- **TypeScript configuration analysis**: Reviews `tsconfig.json` for suspicious settings
 
 ### 🛡️ **Vulnerability Detection**
 - Integrates with `npm audit` for comprehensive vulnerability scanning
@@ -77,6 +79,12 @@ curl -s https://raw.githubusercontent.com/livresoltech/secure-dep-scanner/main/s
 - Whitelist of legitimate packages to reduce false positives
 - Pattern-based detection for emerging threats
 - Age-based detection for potential typosquatting
+
+### 📘 **TypeScript Support**
+- **TypeScript file scanning**: Analyzes `.ts`, `.tsx`, `.d.ts` files for malicious patterns
+- **Configuration analysis**: Reviews `tsconfig.json` for suspicious compiler options
+- **Path mapping detection**: Identifies potentially dangerous wildcard path mappings
+- **TypeScript-specific patterns**: Detects suspicious TypeScript declarations and augmentations
 
 ### 🎨 **Enhanced CLI Experience**
 - **Color-coded output** for better readability
