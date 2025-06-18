@@ -7,7 +7,7 @@ A comprehensive security scanner for detecting suspicious dependencies, maliciou
 **⚠️ IMPORTANT: Before installing any security tool, verify it's legitimate!**
 
 ### 1. **Check the Source**
-- **GitHub Repository**: https://github.com/livresoltech/secure-dep-scanner
+- **GitHub Repository**: https://github.com/fsegall/secure-dep-scanner
 - **Author**: Felipe Segall Corrêa (Livre Software Solutions)
 - **Company**: https://livresoltech.com
 - **NPM Package**: https://www.npmjs.com/package/secure-dep-scanner
