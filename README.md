@@ -18,7 +18,7 @@ A comprehensive security scanner for detecting suspicious dependencies, maliciou
 npm view secure-dep-scanner dist.integrity
 
 # Verify against GitHub release
-git clone https://github.com/livresoltech/secure-dep-scanner.git
+git clone https://github.com/fsegall/secure-dep-scanner.git
 cd secure-dep-scanner
 npm pack
 # Compare the generated .tgz with the published package
@@ -47,7 +47,7 @@ npx secure-dep-scanner --help
 npx secure-dep-scanner --verify
 
 # Review the source code first
-curl -s https://raw.githubusercontent.com/livresoltech/secure-dep-scanner/main/security-scanner.cjs | head -50
+curl -s https://raw.githubusercontent.com/fsegall/secure-dep-scanner/main/security-scanner.cjs | head -50
 ```
 
 **🔒 Security Note**: This package is designed to be transparent and safe. If you find anything suspicious, please report it immediately.
