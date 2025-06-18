@@ -490,6 +490,15 @@ class SecurityScanner {
     this.print('🔍 Running npm audit...', 'blue');
     
     try {
+      // Check if package-lock.json exists
+      if (!fs.existsSync('package-lock.json')) {
+        return [{
+          type: 'AUDIT_ERROR',
+          severity: 'LOW',
+          message: 'Could not run npm audit - no package-lock.json found. Run "npm install" first to generate lockfile.'
+        }];
+      }
+      
       const result = execSync('npm audit --json', { encoding: 'utf8' });
       const auditData = JSON.parse(result);
       
@@ -509,10 +518,22 @@ class SecurityScanner {
       
       return issues;
     } catch (error) {
+      let errorMessage = 'Could not run npm audit';
+      
+      if (error.message.includes('ENOLOCK')) {
+        errorMessage = 'Could not run npm audit - no package-lock.json found. Run "npm install" first to generate lockfile.';
+      } else if (error.message.includes('ENOENT')) {
+        errorMessage = 'Could not run npm audit - package.json not found in current directory.';
+      } else if (error.message.includes('EACCES')) {
+        errorMessage = 'Could not run npm audit - permission denied. Try running with elevated privileges.';
+      } else if (error.message.includes('network')) {
+        errorMessage = 'Could not run npm audit - network error. Check your internet connection.';
+      }
+      
       return [{
         type: 'AUDIT_ERROR',
         severity: 'LOW',
-        message: 'Could not run npm audit'
+        message: errorMessage
       }];
     }
   }
